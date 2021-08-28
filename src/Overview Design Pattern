@@ -1,0 +1,33 @@
+Phân loại và mức độ sử dụng.
+________________________________________________________________________________________________
+        |						     					                                        |
+		|       Creational                  Structural                  Behavioral              |
+________|_______________________________________________________________________________________|
+        |	Factory Method	(5)			Adapter	class 	(2)			Interpreter 			(1) |          	 
+  Class |                               							Template Method 		(3) |       	 
+________|_______________________________________________________________________________________|
+        |	Abstract Factory(5)			Adapter object	(4)			Chain of Responsibility	(2) | x
+        |	Builder 		(2)			Bridge 			(3)			Command 				(4) | x
+        |	Prototype 		(3)			Composite 		(4)			Iterator 				(4) | x
+        |	Singleton 		(4)			Decorator 		(3)			Mediator 				(2) | x
+ Object |	Object Pool		(3)			Facade 			(5)			Memeto 					(1) | 
+        |								Flyweight 		(1)			Observer 				(5) | x
+        |								Proxy 			(4)			State 					(3) | x
+        |															Strategy 				(4) | x
+        |															Visitor 				(1) | 
+________|_______________________________________________________________________________________|
+
+
+Creational
+Những Design pattern loại này cung cấp một giải pháp để tạo ra các object và che giấu được logic của
+việc tạo ra nó, thay vì tạo ra object một cách trực tiếp bằng cách sử dụng method new. Điều này giúp
+cho chương trình trở nên mềm dẻo hơn trong việc quyết định object nào cần được tạo ra trong những tình
+huống được đưa ra.
+
+Structural
+Những Design pattern loại này liên quan tới class và các thành phần của object. Nó dùng để thiết lập,
+định nghĩa quan hệ giữa các đối tượng.
+
+
+Behavioral
+Nhóm này dùng trong thực hiện các hành vi của đối tượng, sự giao tiếp giữa các object với nhau.

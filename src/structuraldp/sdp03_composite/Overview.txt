@@ -1,0 +1,69 @@
+Composite
+
+1. Định nghĩa
+
+Compose objects into tree structures to represent part-whole hierarchies. Composite lets clients treat
+individual objects and compositions of objects uniformly
+
+Composite là một sự tổng hợp những thành phần có quan hệ với nhau để tạo ra thành phần lớn hơn. Nó cho
+phép thực hiện các tương tác với tất cả đối tượng trong mẫu tương tự nhau.
+
+Composite Pattern được sử dụng khi chúng ta cần xử lý một nhóm đối tượng tương tự theo cách xử lý một
+object. Composite pattern sắp xếp các object theo cấu trúc cây để diễn giải 1 phần cũng như toàn bộ hệ
+thống phân cấp. Pattern này tạo một lớp chứa nhóm đối tượng của riêng nó. Lớp này cung cấp các cách để
+sửa đổi nhóm của cùng 1 object. Pattern cho phép client có thể viết code giống nhau để tương tác với
+composite object này, bất kể đó là 1 đối tượng riêng hay tập hợp các đối tượng.
+
+
+2. Thành phần
+
+		                            <<Interface>>                         
+		Client  -----ask-------->   Component             ____________           
+		                       	      execute()                       |
+		                                                              |
+		                                |                             | child
+					___implements_______|_________implement_____      |
+				   |                                            |     |
+				Leaf                                       	   Composite
+				  execute()                                      Component[] children
+				                                                 execute()
+                                                                           
+Các thành phần:
+	- Base Component: một interface or abstract class quy định các method chung cần phải có cho tất cả
+	các thành phần tham gia vào pattern
+	- Leaf: Là lớp hiện thực (implements) các phương thức của component. Nó là các object ko có con
+	- Composite: lưu trữ tập hợp các Leaf và cài đặt các phương thức của Base Component. Composite cài
+	đặt các phương thức được định nghĩa trong interface Component bằng cách ủy nhiệm cho các thành phần
+	con xử lý.
+	- Client: sử dụng Base Component để làm việc với các đối tượng trong Composite
+
+                                                                        	
+3. Cách thực hiện và Ví dụ
+
+Quản lý tệp tin
+
+		                            <<Interface>>                         
+		Client  -----ask-------->   FileComponent         ____________           
+		                       	      void showProperty()             |
+		                              long totalSize()                |
+		                                |                             | child
+					___implements_______|_________implement_____      |
+				   |                                            |     |
+				FileLeaf                                     FolderComposite
+				  void showProperty()                            List<FileComponent> files
+				  long totalSize()                               void showProperty()
+				                                                 long totalSize()
+
+
+5. Ưu nhược điểm
+- Cung cấp cùng 1 cách sử dụng đối với từng đối tượng riêng lẻ or nhóm các đối tượng với nhau
+
+Nhược điểm:
+
+
+6. Sử dụng khi nào?
+- Chỉ nên sử dụng khi nhóm đối tượng phải hoạt động như một đối tượng duy nhất
+- Có thể được sử dụng để tạo ra một cấu trúc giống như cấu trúc cây
+
+
+

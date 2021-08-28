@@ -1,0 +1,101 @@
+Adapter - Bộ chuyển đổi
+1. Định nghĩa
+Adapter Pattern giữ vai trò trung gian giữa hai lớp, chuyển đổi interface của một hay nhiều lớp có sẵn 
+thành một interface khác, thích hợp cho lớp đang viết. Điều này cho phép các lớp có các interface khác 
+nhau có thể dễ dàng giao tiếp tốt với nhau thông qua interface trung gian, không cần thay đổi code của 
+lớp có sẵn cũng như lớp đang viết.
+Adapter Pattern còn gọi là Wrapper Pattern do cung cấp một interface “bọc ngoài” tương thích cho một hệ 
+thống có sẵn, có dữ liệu và hành vi phù hợp nhưng có interface không tương thích với lớp đang viết.
+
+2. Thành phần
+Một Adapter Design Pattern gồm:
+	- Adaptee: định nghĩa interface không tương thích, cần được tích hợp vào.
+	- Adapter: lớp tích hợp, giúp interface không tương thích tích hợp được với interface đang làm việc.
+	Thực hiện việc chuyển đổi interface cho Adaptee và kết nối Adaptee với Client.
+	- Target: một interface chứa các chức năng được sử dụng bởi Client (domain specific).
+	- Client: lớp sử dụng các đối tượng có interface Target.
+	
+3. Cách thực hiện
+
+Cách 1 Object Adapter - Composition
+
+Lớp mới tham chiếu đến một hoặc nhiều đồi tượng của lớp có sẵn với interface không tương thích (Adaptee),
+đồng thời cài đặt interface mà người dùng mong muốn (Target). Trong lớp mới, khi cài đặt các phương thức
+của interface người dùng mong muốn sẽ gọi phương thức cần thiết thông qua đối tượng thuộc lớp Adaptee.
+
+Client
+  Target target      ____________ Target                      Adaptee
+  void doSomething()                void request()              void specificRequest()
+                                         |                                |
+                                     implements                           |
+                                         |                                |
+                                  Adapter                                 |
+                                    Adaptee adaptee  _____________________|
+  adaptee.specificRequest()------   void request()                      
+
+Cách 2 Class Adapter - Inheitance
+
+Lớp mới kế thừa lớp có sẵn với interface không tương thích đồng thời cài đặt interface mà người dùng mong
+muốn. Trong lớp mới, khi cài đặt các phương thức của interface người dùng mong muốn, phương thức này sẽ gọi
+các phương thức cần thiết mà nó kế thừa được từ lớp Adaptee.
+
+Client
+  Target target      ____________ Target                      Adaptee
+  void doSomething()                void request()              void specificRequest()
+                                         |                                |
+                                     implements                           |
+                                         |                                |
+                                  Adapter                                 |
+                                    Adaptee adaptee  ________extend_______|
+  adaptee.specificRequest()------   void request()                      
+
+Trong Class Adapter, nếu Adaptee là 1 class và không phải là 1 interface thì Adapter là một lớp con của
+Adaptee. Do đó nó sẽ không phục vụ tất cả các lớp con khác theo cùng 1 cách vì Adapter là một cụ thể của
+Adaptee.
+Với Object Apdater, sử dụng composition để giữ một thể hiện của Adaptee, cho phép một Adapter hoạt động với
+nhiều Adaptee nếu cần thiết.
+
+4. Ví dụ
+
+Ứng dụng Translation
+Một người Việt muốn trao đổi với người Nhật nhưng không biết ngôn ngữ của nhau nên cần một người để chuyển
+đổi, trong ví dụ này là từ tiếng Việt sang Tiếng Nhật. Mô hình hóa với Adapter Pattern
+- Client: Người Việt sẽ là client, gửi message cho người nhật
+- Target: nội dung message được client cung cấp cho thông dịch viên (Adapter)
+- Adapter: là thông dịch viên, nhận tiếng việt từ client và chuyển đổi nó sang tiếng nhật trước khi gửi cho
+người Nhật
+- Adaptee: đây là interface hoặc class người nhật sử dụng để nhận message được chuyển đổi từ thông dịch viên
+
+VietnameseClient
+  VietnamseTarget target  ___________ VietnameseTarget                     JapaneseAdaptee
+  send()                                void send(String message)              void receive(String message)
+                                            |                                      |
+                                        implements                                 |
+                                            |                                      |
+                                      TranslatorAdapter                            |
+                                        JapaneseAdaptee adaptee  __________________|
+    adaptee.receive()  --------------   void send(String message)                      
+
+
+Ví dụ với BufferedReader
+	BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+	System.out.print("Enter your name: ");
+	String s = br.readLine();
+
+5. Ưu nhược điểm
+Ưu điểm
+- Cho phép nhiều đối tượng có interface giao tiếp khác nhau có thể tương tác và giao tiếp với nhau
+- Tăng khả năng sử dụng lại thư viện với interface không thay đổi do không có mã nguồn
+Nhược điểm:
+- Tất cả các yêu cầu được chuyển tiếp tăng thêm chi phí
+- Đôi khi có quá nhiều Adapter được thiết kể trong một chuỗi Adapter trước khi đến được yêu cầu thực sự
+
+6. Sử dụng khi nào?
+- Khi không thể kế thừa lớp A, nhưng muốn một lớp B có những xử lý tương tự như lớp A -> Object Adapter
+- Khi muốn sử dụng 1 lớp đã tồn tại trước đó nhưng interface sử dụng không phù hợp như mong muốn
+- Khi muốn tạo ra những lớp có khả năng sử dụng lại -> phối hợp các lớp ko liên quan hay những lớp không thể
+đoán trước được và những lớp không có interface tương thích
+- Cần có sự chuyển đổi interface từ nhiều nguồn khác nhau 
+
+
+

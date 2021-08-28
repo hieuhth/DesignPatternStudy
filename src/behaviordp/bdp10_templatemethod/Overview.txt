@@ -1,0 +1,79 @@
+Template method
+
+1. Định nghĩa
+
+Template Method Pattern "Định nghĩa một bộ khung của một thuật toán trong một chức năng, chuyển giao việc
+thực hiện nó cho các lớp con. Mẫu Template Method cho phép lớp con định nghĩa lại cách thực hiện của một
+thuật toán, mà không phải thay đổi cấu trúc thuật toán".
+
+2. Thành phần
+
+	Context				<>-------strategy-----------	<<Interface>>
+	  Strategy strategy									Strategy
+	  													  algorithm()
+															  |
+	  								    _____implements_______|______implements_______
+	  								   |											  |
+	  							ConcreteStrategy1									ConcreteStrategy2
+	  							  algorithm()										  algorithm()
+	  							   										 
+Các thành phần
+
+- Strategy : định nghĩa các hành vi có thể có của một Strategy.
+- ConcreteStrategy : cài đặt các hành vi cụ thể của Strategy.
+- Context : chứa một tham chiếu đến đối tượng Strategy và nhận các yêu cầu từ Client, các yêu cầu này sau đó
+được ủy quyền cho Strategy thực hiện.
+
+                             	
+3. Cách thực hiện và Ví dụ
+
+Ví dụ ứng dụng cung cấp cung cấp nhiều giải thuật sắp xếp khác nhau: quick sort, merge sort, selection sort,
+heap sort, tim sort, …. Tùy theo loại dữ liệu, số lượng phần tử, … mà người dùng có thể chọn một giải thuật 
+sắp xếp phù hợp.
+
+
+	SortedList						<>-------state--------------	<<Interface>>
+	  SortStrategy strategy											SortStrategy
+	  List<String> items											  void sort(List<T> items)
+	  void sort()										  					|
+	 											  						implements
+	  					 ___________________________________________________|_____________
+	  					|				  				|								  |		  			
+					QuickSort	   	  				MergeSort	   					SelectionSort	  
+					  void sort(List<T> items)		  void sort(List<T> items)		  void sort(List<T> items)
+
+5. Ưu nhược điểm
+- Đảm bảo nguyên tắc Single responsibility principle (SRP) : một lớp định nghĩa nhiều hành vi và chúng xuất
+hiện dưới dạng với nhiều câu lệnh có điều kiện. Thay vì nhiều điều kiện, chúng ta sẽ chuyển các nhánh có điều
+kiện liên quan vào lớp Strategy riêng lẻ của nó.
+- Đảm bảo nguyên tắc Open/Closed Principle (OCP) : chúng ta dễ dàng mở rộng và kết hợp hành vi mới mà không
+thay đổi ứng dụng.
+- Cung cấp một sự thay thế cho kế thừa.
+
+Nhược điểm:
+
+
+6. Sử dụng khi nào?
+- Khi muốn có thể thay đổi các thuật toán được sử dụng bên trong một đối tượng tại thời điểm run-time.
+- Khi có một đoạn mã dễ thay đổi, và muốn tách chúng ra khỏi chương trình chính để dễ dàng bảo trì.
+- Tránh sự rắc rối, khi phải hiện thực một chức năng nào đó qua quá nhiều lớp con.
+- Cần che dấu sự phức tạp, cấu trúc bên trong của thuật toán.
+
+7. So sánh Strategy và State
+
+- Sự phụ thuộc
+	State: đi kèm 1 chút phụ thuộc trong các lớp con, chẳng hạn State biết về các trạng thái khác xuất hiện
+	trước/sau nó.
+	Strategy: ko có sự phụ thuộc như State, bất kỳ trạng thái nào cũng có thể được khởi tạo 1 cách độc lập,
+	chúng ko biết được sự tồn tại của các Strategy khác.
+- Mục đích sử dụng:
+	State: quyết định khi nào thực hiện chúng, sử dụng khi cần trả lời when/what
+	Strategy: quyết định cách thực hiện một số hành động, sử dụng Strategy khi chúng ta cần trả lời how
+- Thời điểm khởi tạo:
+	State: năng động hơn, có sự luân chuyển từ trạng thái này sang trạng thái khác. State có thể coi là mở rộng
+	hơn Strategy
+	Strategy: mô hình khởi tạo 1 lần, ko có sự luân chuyển trạng thái
+
+
+
+

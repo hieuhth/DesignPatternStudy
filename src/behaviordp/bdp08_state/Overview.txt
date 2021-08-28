@@ -1,0 +1,59 @@
+State
+
+1. Định nghĩa
+
+Allow an object to alter its behavior when its internal state changes. The object will appear to change its
+class.
+
+State Pattern cho phép object thay đổi hành vị của nó khi trạng thái của nó thay đổi.
+
+2. Thành phần
+
+	Context				<>-------state--------------	<<Interface>>
+	  request()											State
+	  	|												  handle()
+	  state.handle()										  |
+	  								    _____implements_______|______implements_______
+	  								   |											  |
+	  							ConcreteState1									ConcreteState2
+	  							  handle()										  handle()
+	  							   										 
+Các thành phần
+- Context: được sử dụng bởi client, client ko truy cập trực tiếp đến State của object. Lớp Context này chứa
+thông tin của ConcreteState object, cho hành vi nào tương ứng với trạng thái nào hiện đang được thực hiện.
+- State: interface or abstract class xác định các đặc tính cơ bản của tất cả các object ConcreteState. Chúng
+sẽ được sử dụng bởi Context để truy cập chức năng có thể thay đổi.
+- ConcreteState: cài đặt các method của State. Mỗi ConcreteState thực hiện logic và hành vi riêng của nó tùy
+thuộc vào Context.
+
+                             	
+3. Cách thực hiện và Ví dụ
+
+Ví dụ ứng dụng quản lý Document, một Document có thể bao gồm các trạng thái: tạo mới, trình phê duyệt, phê
+duyệt và từ chối.
+
+	DocumentContext					<>-------state--------------	<<Interface>>
+	  void setState(State state)									State
+	  void applyState()												  void handleRequest()
+	  	|												  					|
+	  state.handleRequest()										  		implements
+	  								    ____________________________________|___________________
+	  								   |				  |					|		  			|
+	  								NewState	   SubmittedState	   ApprovedState	  RejectedState
+
+
+5. Ưu nhược điểm
+- Đảm bảo nguyên tắc Single responsibility principle (SRP) : tách biệt mỗi State tương ứng với 1 class riêng
+biệt.
+- Đảm bảo nguyên tắc Open/Closed Principle (OCP) : chúng ta có thể thêm một State mới mà không ảnh hưởng đến
+State khác hay Context hiện có.
+- Giữ hành vi cụ thể tương ứng với trạng thái.
+- Giúp chuyển trạng thái một cách rõ ràng.
+
+Nhược điểm:
+
+
+6. Sử dụng khi nào?
+- Khi hành vi của đối tượng phụ thuộc vào trạng thái của nó và nó phải có khả năng thay đổi hành vi của nó lúc
+run-time theo trạng thái mới.
+- Khi nhiều điều kiện phức tạp buộc đối tượng phụ thuộc vào trạng thái của nó.

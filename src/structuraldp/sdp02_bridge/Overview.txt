@@ -1,0 +1,108 @@
+Bridge - Cầu nối
+
+1. Định nghĩa
+
+Một thành phần trong OOP thường có 2 phần: Phần trừu tượng (abstraction) định nghĩa các chức năng và phần
+thực thi (implementation) các chức năng được định nghĩa trong phần trừu tượng. Hai phần này liên hệ với 
+nhau thông qua quan hệ kế thừa. Những thay đổi trong phần trừu tượng dẫn đến các thay đổi trong phần thực
+thi.
+
+Bridge Pattern được sử dụng để tách thành phần trừu tượng và thành phần thực thi riêng biệt. Do đó các
+thành phần có thể thay đổi một cách độc lập mà ko ảnh hưởng đến các thành phần khác. Thay vì quan hệ kế
+thừa, hai thành phần này liên hệ với nhau qua quan hệ chứa trong.
+
+"Decouple an abstraction from its implementation so that the two can vary independently."
+
+Ban đầu thiết kế 1 class với rất xử lý -> tạo 1 class khác và move các xử lý qua class mới, trong class
+cũ giữ 1 đối tượng của class mới.
+
+2. Thành phần
+
+		                            Abstraction                          Implementor
+		Client  -----uses-------->    Implementor implementor  <-------    void doOperation()        
+		                       ___    void doSomething()                         |
+		                      |                  |                               |
+		                     call            implements                     implements
+		                      |                  |                               |
+ implementor.doOperation()____|                  |                               |
+                                    RefinedAbstraction                   ConcreteImplementor
+                                                                           void doOperation()
+                                                                           
+Các thành phần:
+	- Client: khách hàng sử dụng qua Abstraction
+	- Abstraction: định ra một abstract interface quản lý tham chiếu đến đối tượng thực hiện cụ thể
+	- Implementor: định ra các interface cho các lớp hiện thực. Thông thường nó là interface định ra
+	các tác vụ nào đó của Abstraction
+	- ConcreteImplementor: hiện thực Implementor interface
+	- RefinedAbstraction: thực hiện các phương thức đã định ra trong Abstraction bằng cách sử dụng môt
+	tham chiếu đến một đối tượng của Implementor
+
+                                                                        	
+3. Cách thực hiện và Ví dụ
+
+Hệ thống ngân hàng cung cấp các loại tài khoản cho khách hàng, Checking account và Saving account
+
+	A									<<Abstract class>>
+	b									Bank
+	s									
+	t											|
+	r										implements
+	a											|
+	c								____________|____________
+	t							   |                         |
+	i						    TBBank	                 Vietcombank
+	o
+	n							   |                         |
+								create                    create
+Implementation    _________________|_____                ____|__________________
+                 |                       |              |                       |
+         CheckingAccount          SavingAccount    CheckingAccount        SavingAccount
+
+Với cách thiết kế trên khi cần cung cấp thêm 1 loại tài khoản, phải tạo class mới cho tất cả các ngân
+hàng -> Số lượng class tăng lên nhiều
+
+Sử dụng Bridge Pattern để tái cấu trúc lại hệ thống trên như sau:
+
+Abstraction			<<Abstract class>>   ____________ has-A_____________  <<Interface>>
+					Bank                             Bridge               Account
+												
+							|                                                   |
+						implements                                         implements
+							|                                                   |
+Implementation   ___________|____________                          _____________|___________
+				|                        |                        |                         |
+			TBBank	                 Vietcombank          CheckingAccount               SavingAccount
+	
+Khi sử dụng Bridge Pattern, khi có thêm 1 loại tài khoản mới, chúng ta chỉ cần thêm vào một implement
+mới cho Account, các thành phần khác của Bank không bị ảnh hưởng. Hoặc cần thêm một ngân hàng mới như
+ViettinBank chúng ta chỉ cần thêm implement mới cho Bank, các thành phần cũng ko bị ảnh hưởng và số
+class cũng chỉ tăng lên 1.
+
+Trong trường hợp mà SavingAccount của TPBank có những đặc điểm, function mà VietcomBank không có thì
+sẽ xử lý như nào?
+-> Tạo 1 class extend từ SavingAccount ví dụ như TBBankSavingAccount, trong lớp đó có thể override lại
+các đặc điểm riêng cho TPBank. Khi đó ở Client khi khởi tạo thì thực hiện
+
+Bank tpBank = new TPBank(new TPBankSavingAccount());
+
+
+5. Ưu nhược điểm
+Ưu điểm
+- Giảm sự phụ thuộc giữa abstraction và implementation (loose coupling)
+- Giảm số lượng class không cần thiết
+- Code sẽ gọn gàng hơn, kích thước ứng dụng nhỏ hơn
+- Dễ bảo trì hơn
+- Dễ mở rộng về sau
+- Cho phép ẩn các chi tiết implement từ client
+
+Nhược điểm:
+
+
+6. Sử dụng khi nào?
+- Khi muốn tách ràng buộc giữa Abstraction và Implementation để có thể dễ dàng mở rộng độc lập nhau
+- Cả Abstraction và Implementation nên được mở rộng bằng subclass
+- Sử dụng ở những nơi mà những thay đổi được thực hiện trong implement không ảnh hưởng tới phía client
+
+
+
+

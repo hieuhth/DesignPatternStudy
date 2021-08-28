@@ -1,0 +1,73 @@
+Facade
+
+1. Định nghĩa
+
+Provide a unified interface to a set of interfaces in a subsystem. Facade defines a higher-level 
+interface that makes the subsystem easier to use.
+
+Facade cung cấp 1 giao diện chung đơn giản thay cho một nhóm các giao diện có trong hệ thống con. Facade
+định nghĩa một giao diện ở một cấp độ cao hơn để giúp cho người dùng có thể dễ dàng sử dụng hệ thống con
+này. Facade cho phép các đối tượng truy cập trực tiếp giao diện chung để giao tiếp với cái giao diên có
+trong hệ thống con. Mục tiêu là che giấu các hoạt động phức tạp bên trong hệ thống con làm cho hệ thống
+con dễ sử dụng hơn.
+
+Facade tương tự với Adapter, làm việc cùng 1 cách nhưng mục đích sử dụng khác nhau. Adapter chuyển đổi mã
+nguồn để làm việc đc với mã nguồn khác, Facade cho phép bao bọc mã nguồn gốc để giao tiếp với mã nguồn
+khác dễ dàng hơn
+
+2. Thành phần
+
+							Client 1					Client 2
+Client
+								|							|
+								|___________________________|
+											  |
+Facade									   Facade
+
+											  |
+				  	 _________________________|_______________________
+Subsystem			|						  |                       |
+				Subsystem 1				Subsystem 2				Subsystem 3
+			     								  
+Các thành phần:
+	- Facade: biết rõ lớp của hệ thống con nào đảm nhận việc đáp ứng yêu cầu của client, chuyển yêu
+	cầu của client đến các object của subsystem tương ứng. Facade thường là Singleton.
+	- Subsystems: cài đặt các chức năng của hệ thống con, xử lý công việc được gọi bởi Facade. Các lớp
+	này ko cần biết Facade và ko tham chiếu đến Facade.
+	- Client: đối tượng sử dụng
+                                                                        	
+3. Cách thực hiện và Ví dụ
+
+Công ty bán hàng online: Khi một sản phẩm được mua, nó sẽ qua các bước xử lý: lấy thông tin về tài
+khoản mua hàng, thanh toán, vận chuyển, gửi Email/ SMS thông báo.
+
+- AccountService: lấy thông tin cơ bản của khách hàng thông qua email được cung cấp.
+- PaymentService: có thể thanh toán thông qua Paypal, thẻ tín dụng (Credit Card), tài khoản ngân hàng
+trực tuyến (E-banking), Tiền mặt (cash).
+- ShippingService: có thể chọn Free Shipping, Standard Shipping, Express Shipping.
+- EmailService: có thể gửi mail cho khách hàng về tình hình đặt hàng, thanh toán, vận chuyển, nhận hàng.
+- SMS: có thể gửi thông báo SMS cho khách hàng khi thanh toán online.
+- ShopFacade : là một Facade Pattern, class này bao gồm các dịch vụ có bên trong hệ thống. Nó cung cấp
+một vài phương thức để Client có thể dễ dàng mua hàng. Tùy vào nghiệp vụ mà nó sẽ sử dụng những dịch
+tương ứng, chẳng hạn dịch vụ SMS chỉ được sử dụng nếu khách hàng đăng ký mua hàng thông qua hình thức
+thanh toán online (Paypal, E-banking, …).
+- Client : là người dùng cuối sử dụng ShopFacade để mua hàng.
+
+
+5. Ưu nhược điểm
+- Giúp hệ thống trở nên đơn gian hơn
+- Giảm sự phụ thuộc của các mã code bên ngoài với hiện thực bên trong của thư viện -> linh hoạt trong
+phát triển các hệ thống
+- Đóng gói tập nhiều hàm API đc thiết kế ko tốt bằng một hàm API đơn có thiết kế tốt hơn.
+
+Nhược điểm:
+
+
+6. Sử dụng khi nào?
+- Khi hệ thống có rất nhiều lớp làm người sử dụng rất khó để hiểu được quy trình xử lý của chương trình
+Và khi có rất nhiều subsystem mà mỗi subsystem lại có những giao diện riêng lẻ của nó, rất khó cho việc
+sử dụng phối hợp.
+- Khi người dùng sử dụng phụ thuộc nhiều vào các lớp cài đặt.
+- Khi bạn muốn phân lớp các hệ thống con
+- Khi bạn muốn bao bọc, che giấu tính phức tạp trong các hệ thống con đối với phía Client
+

@@ -1,0 +1,94 @@
+1. Khái niệm
+
+Object Pool is a creational design pattern. Object Pool Pattern says that
+“to reuse the object that are expensive to create”.
+
+Object Pool Pattern là một trong những Creational pattern. Nó không nằm trong
+danh sách các Pattern được giới thiệu bởi GoF. Object Pool Pattern cung cấp một
+kỹ thuật để tái sử dụng objects thay vì khởi tạo không kiểm soát.
+
+Ý tưởng của Object Pooling là: chúng ta dùng Object Pool Pattern quản lý một tập hợp các objects 
+mà sẽ được tái sử dụng trong chương trình. Khi client cần sử dụng object, thay vì tạo ra một đối 
+tượng mới thì client chỉ cần đơn giản yêu cầu Object pool lấy một đối tượng đã có sẵn trong object 
+pool. Sau khi object được sử dụng nó sẽ không hủy mà sẽ được trả về pool cho client khác sử dụng. 
+Nếu tất cả các object trong pool được sử dụng thì client phải chờ cho tới khi object được trả về pool.
+Object pool thông thường hoạt động theo kiểu: tự tạo đối tượng mới nếu chưa có sẵn hoặc khởi tạo trước 
+1 object pool chứa một số đối tượng hạn chế trong đó.
+
+2. Cách cài đặt
+
+Một Object Pool Pattern bao gồm các thành phần cơ bản sau:
+- Client : một class yêu cầu khởi tạo đối tượng PooledObject để sử dụng.
+- PooledObject : một class mà tốn nhiều thời gian và chi phí để khởi tạo. Một class cần giới hạn số lượng 
+đối tượng được khởi tạo trong ứng dụng.
+- ObjectPool : đây là lớp quan trọng nhất trong Object Pool Pattern. Lớp này lưu giữ danh sách các 
+PooledObject đã được khởi tạo, đang được sử dụng. Nó cung cấp các phương thức cho việc lấy đối tượng từ 
+Pool và trả đối tượng sau khi sử dụng về Pool.
+
+Client   -----ASK----------> ObjectPool
+  |                          instances[]
+  |                          get()
+  |                          release()
+  |                              |
+  |                              |
+  |_________USES____________ PooledObject
+                             doSomething()
+                             
+Ví dụ Taxi:
+
+Một hãng taxi A chỉ hữu hạn N chiếc taxi, hãng taxi chịu trách nhiệm quản lý trạng thái các xe (đang rảnh 
+hay đang chở khách), phân phối các xe đang rảnh đi đón khách, chăm sóc, kéo dài thời gian chờ đợi của khách 
+hàng cho trong trường hợp tất cả các xe đều đang bận (để chờ một trong số các xe đó rảnh thì điều đi đón 
+khách luôn), hủy khi việc chờ đợi của khách hàng là quá lâu.
+
+Ta mô phỏng và thiết kế thành các lớp sau:
+	- Taxi: đại diện cho một chiếc taxi, là một class định nghĩa các thuộc tính và phương thức của một taxi.
+	- TaxiPool: Đại diện cho công ty taxi, có:
+		+ Phương thức getTaxi() : để lấy về một thể hiện Taxi đang ở trạng thái rảnh, có thể throw ra một 
+		exception nếu chờ lâu mà không lấy được thể hiện.
+		+ Phương thức release() : để trả thể hiện Taxi về Pool sau khi đã phục vụ xong.
+		+ Thuộc tính available : lưu trữ danh sách Taxi rảnh, đang chờ phục vụ.
+		+ Thuộc tính inUse : lưu trữ danh sách Taxi đang bận phục vụ.
+	- ClientThread: đại diện cho khách hàng sử dụng dịch vụ Taxi, mô phỏng việc gọi, chở và trả khách.
+	
+---> Ưu điểm: tận dụng được các tài nguyên đã được cấp phát
+
+Ví dụ Connection pooling: ứng dụng trong connect tới database
+
+Connection pool: là kỹ thuật cho phép và tạo duy trì một tập các kết nối dùng chung nhằm tăng hiệu suất cho
+các ứng dụng bằng cách sử dụng các kết nối khi có yêu cầu thay vì việc tạo mới kết nối.
+Connection pool manager: trình quản lý connection pool.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	

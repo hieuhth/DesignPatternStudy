@@ -1,0 +1,90 @@
+Flyweight
+
+1. Định nghĩa
+
+Use sharing to support large numbers of fine-grained objects efficiently.
+
+Flyweight cho phép tái sử dụng object tương tự đã tồn tại bằng cách lưu trữ chúng or tạo ra object mới
+khi không tìm thấy đối tượng phù hợp.
+Flyweight được sử dụng khi cần tạo ra 1 số lượng lớn các object của 1 lớp nào đó. Do mỗi object đều cần
+một không gian bộ nhớ nên với số lượng lớn object được tạo ra có thể gây nên vấn đề nghiêm trọng đặc
+biệt đối với các thiết bị có dung lương bộ nhớ thấp. FLyweight có thể được áp dụng để giảm tải cho bộ
+nhớ thông qua cách chia sẻ các object. Vì vậy performance của hệ thống được tối ưu.
+Flyweight là immutable object, nghĩa là ko thể thay đổi khi đã được khởi tạo. 
+
+Hai trạng thái của Flyweight object:
+Mục tiêu giảm bộ nhớ có thể đạt được bẳng cách tách các thuộc tính của object thàng 2 trạng thái độc lập
+và phụ thuộc. Hay còn gọi là Intrinsic (nội tại) và Extrinsic (bên ngoài)
+	- Intrinsic: chứa dư liệu ko thể thay đổi và ko phụ thuộc vào ngữ cảnh của object Flyweight. Những
+	dữ liệu này có thể được lưu trữ vĩnh viễn bên trong object. Vì vậy mà Flyweight object có thể chia 
+	sẻ. Dữ liệu nội tại là phi trạng thái và thường ko thay đổi. Tính năng này cho phép khả năng tái
+	tạo các thuộc tính đối tượng Flyweight giữa các object tượng tự khác. Object Flyweight chỉ nên nhận
+	trạng thái bên trong của chúng thông qua các tham số của hàm tạo và ko cung cấp phương thức setter 
+	hay các biến public
+	- Extrinsic: thể hiện tính chất phụ thuộc ngữ cảnh của Flyweight. Trạng thái này chứa các thuộc tính
+	và dữ liệu được áp dụng or được tính toán trong thời gian thực thi, dữ liệu này ko được lưu trong bộ
+	nhớ. Các đối tượng này không thể được chia sẻ. Client chịu trách nhiệm truyền dữ liệu liên quan đến
+	trạng thái bên ngoài của Flyweight khi cần thiết.
+
+2. Thành phần
+
+	FlyweightFactory    ________create___________Flyweight
+	
+	      |                                          |
+	  uses|							____implements___|_______implements____
+	  	  |                        |                                       |
+	   Client				ConcreteFlyweight						UnsharedFlyweight
+	   						  IntrinsicState						  allState
+	   						  doSomething(extrinsicState)			  doSomething(etrinsicState)
+	  |	  	|______________________| uses							          |
+	  |______________________________________________uses_____________________|	      
+	     								  
+Các thành phần:
+	- Flyweight: là một interface/abstract class, định nghĩa các các thành phần của một đối tượng
+	- ConcreteFlyweight: triển khai các method đã được định nghĩa trong Flyweight. Việc triển khai này
+	phải thực hiện các khả năng của trạng thái nội tại. Đó là dữ liệu ko thể thay đổi và có thể chia
+	sẻ. Các đối tượng là phi trạng thái (stateless) trong triển khai này. Vì vậy, đối tượng
+	ConcreteFlyweight giống nhau có thể được sử dụng trong các ngữ cảnh khác nhau.
+	- UnsharedFlyweight: các thể hiện ko được chia sẻ (not shared). Các thông tin của các object có thể
+	là stateful
+	- FlyweightFactory (cache): lớp này có thể là một Factory Pattern được sử dụng để giữ tham chiếu đến
+	object Flyweight đã được tạo ra. Nó cung cấp 1 method để truy cập đối tượng được chia sẻ. Factory
+	bao gồm 1 Pool (Hashmap, ko cho phép bên ngoài truy cập vào) để lưu trữ object Flyweight.
+	- Client: Khách hàng
+                                                                        	
+3. Cách thực hiện và Ví dụ
+
+Ứng dụng game gồm nhiểu Solider, được chia thành các loại Yuri, Spy, Doctor,... Mỗi solider có id và level
+khác nhau. Thời gian để tạo 1 solider là 3s.
+
+Áp dụng Flyweight Pattern như sau:
+- ISoldier : đóng vai trò là một Flyweight. Định nghĩa phương thức promote với tham số là context, giá trị
+tham số này được quyết định bởi Client.
+- Context : đóng vai trò là Extrinsic State. Tùy vào ngữ cảnh khác nhau sẽ có giá trị khác nhau.
+- Soldier : đóng vai trò là ConcreteFlyweight. Triển khai các phương thức đã được định nghĩa trong
+Flyweight. Nó có một giá trị name (ứng với loại lính – Intrinsic State) không thay đổi, có thể chia sẻ
+được.
+- SoldierFactory : đóng vai trò là FlyweightFactory. Nó giữ một private Map để lưu giữ các loại soldier
+đã được tạo. Một phương thức createSoldier() để tạo soldier ứng với tên loại được truyền vào. Một
+phương thức getTotalOfSoldiers() để kiểm tra số lượng các loại soldier đã tạo.
+- GameApp : đóng vai trò là Client. Sử dụng SoldierFactory để tạo các Soldier.
+
+
+
+
+
+5. Ưu nhược điểm
+- Giảm số lượng đối tượng được tạo ra bằng cách chia sẻ đối tượng. Vì vậy, tiết kiệm bộ nhớ và các thiết 
+bị lưu trữ cần thiết.
+- Cải thiện khả năng cache dữ liệu vì thời gian đáp ứng nhanh.
+- Tăng performance.
+
+Nhược điểm:
+- Các object được tạo ra có thể cùng tham chiếu tới cùng object khác, các thuộc tính bị update theo. 
+
+6. Sử dụng khi nào?
+- Khi có một số lớn các đối tượng được ứng dụng tạo ra một cách lặp đi lặp lại.
+- Khi việc tạo ra đối tượng đòi hỏi nhiều bộ nhớ và thời gian.
+- Khi muốn tái sử dụng đối tượng đã tồn tại thay vì phải tốn thời gian để tạo mới.
+- Khi nhóm đối tượng chứa nhiều đối tượng tương tự và hai đối tượng trong nhóm không khác nhau nhiều.
+

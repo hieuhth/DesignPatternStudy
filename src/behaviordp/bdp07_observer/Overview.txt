@@ -1,0 +1,87 @@
+Observer
+
+1. Định nghĩa
+
+Define a one-to-many dependency between objects so that when one object changes state, all its dependents
+are notified and updated automatically.
+
+Observer Pattern định nghĩa mối quan hệ phụ thuộc 1-nhiều giữa các object để khi 1 object thay đổi trạng
+thái, tất cả các thành phần phụ thuộc của nó sẽ được thông báo và cập nhật tự động.
+
+2. Thành phần
+
+	<<Interface>>
+	Subject													<<Interface>>
+	  attach()		<--------------observer------------		Observer
+	  detach()												  update()
+	  notify()													|
+		|														|
+		|														|
+	implements												implements
+		|														|
+		|														|
+	ConcreteSubject	<---------------subject------------		ConreteObserver
+	  SubjectState											  update()
+	  
+	   								  										 
+Các thành phần
+- Subject: chứa danh sách các observer, cung cấp method để có thể thêm và loại bỏ observer
+- Observer: đinh nghĩa method update() cho các object sẽ được subject thông báo tới khi có sự thay đổi trạng
+thái
+- ConcreteSubject: implement các method của Subject, lưu trữ trạng thái danh sách các ConcreteObserver, gửi
+thông báo tới các Observer của nó khi có sự thay đổi.
+- ConcreteObserver: implement các method của Observer, lưu trữ trạng thái của subject, thực thi việc cập nhật
+để giữ cho trạng thái đồng nhất với subject gửi thông báo đến.
+
+                             	
+3. Cách thực hiện và Ví dụ
+
+Ví dụ Tracking thao tác một Account
+Hệ thống theo dõi tài khoản người dùng, mọi thao tác của user đều cần được ghi log lại, sẽ thực hiện gửi mail
+thông báo khi tài khoản hết hạn, thực hiện chặn user nếu truy cập ko hợp lệ.
+
+
+	<<Interface>>
+	Subject																		<<Interface>>
+	  void attach(Observer observer)		<----------observer---------		Observer
+	  void detach(Observer observer)											  void update(User user)
+	  void notifyAllObserver()															|
+				|																		|
+				|																		|
+			implements																implements
+				|														________________|________________
+				|													   |				|				 |
+	AccountService													Logger			  Mailer		Protector
+	  User user
+	  List<Observer> observers										   |				|				 |				
+	  void attach(Observer observer)		<---------state------------/----------------/----------------/
+	  void detach(Observer observer)
+	  void notifyAllObserver()
+	  void changeStatus(LOGIN_STATUS status)								User
+	  void login()															  String email
+				|_______________________________________________________	  String ip
+																			  LOGIN_STATUS status
+
+5. Ưu nhược điểm
+- Dễ dàng mở rộng với ít sự thay đổi, cho phép thay đổi Subject và Observer 1 cách độc lập.
+- Sự thay đổi trạng thái của 1 object có thể được thông báo đến các object khác mà ko phải giữ liên kết quá
+chặt chẽ.
+- 1 object có thể thông báo đến nhiều đối tượng khác, ko giới hạn số lượng
+
+Nhược điểm:
+- Phải xem xét đên trường hợp cập nhật ko mong muốn của Subject -> tốn nhiều chi phí 
+
+6. Sử dụng khi nào?
+- Thường được sử dụng trong mối quan hệ 1-n giữa các object với nhau, trong đó 1 object thay đổi và muốn
+thông báo cho tất cả các object liên quan biết về sự thay đổi đó.
+- Khi thay đổi 1 đối tượng, yêu cầu thay đổi object khác và chúng ta ko biết có bao nhiêu object cần thay
+đổi, những object này là đối tượng nào.
+- Sử dụng trong ứng dụng broadcast communication
+- Sử dụng để quản lý sự kiện
+- Sử dụng trong mô hình MVC: tách model ra khỏi View, View đại diện cho Observer và Model là đối tượng
+Observable
+
+
+
+
+

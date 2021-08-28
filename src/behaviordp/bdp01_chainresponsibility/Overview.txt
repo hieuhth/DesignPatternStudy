@@ -1,0 +1,95 @@
+Chain of responsibility (COR)
+
+1. Định nghĩa
+
+Avoid coupling the sender of a request to its receiver by giving more than one object a chance to handle
+the request. Chain the receiving objects and pass the request along with the chain until an object
+handles it.
+
+COR cho phép 1 object gửi 1 request nhưng ko biết object nào sẽ nhận và xử lý nó. Điều này được thực hiện
+bằng cách kết nối các object nhận yêu cầu thàng 1 chuỗi và gửi request theo chuỗi đó cho đến khi có một
+object xử lý nó.
+
+2. Thành phần
+
+	Client     ________request____________		<<Interface>>        _______________________________
+												Handler												|
+												  handleRequest()									|
+												       |										successor
+							       _____implements_____|_______implements______						|
+						          |                                            |					|
+	    				ConcreteHandler1								ConcreteHandler2		____|
+	 		     		  Handler nextHandler						  	  Handler nextHandler
+ 						  handleRequest()								  handleRequest()
+Các thành phần
+	- Hanlder: định nghĩa 1 interface để xử lý các yêu cầu. Gán giá trị cho object successor (ko bắt buộc)
+	- ConcreteHandler: xử lý yêu cầu. Có thể truy cập object successor (thuộc class Hanlder). Nếu object
+	ConcreteHandler ko thể xử lý được yêu cầu, nó sẽ gửi request tới successor của nó.
+	- Client
+                             	
+3. Cách thực hiện và Ví dụ
+
+Ứng dụng Logger
+
+											Logger
+											  LogLevel logLevel
+   Client   ________request_____________	  Logger nextLogger                          _______
+											  Logger setNext(Logger nextLogger)					|
+											  void log(LogLevel severity, String msg)			|
+											  abstract void writeMessage(String msg)            |
+											       |										successor
+				_________________extends___________|____________extends____						|
+			   |                             |                             |					|
+		ConsoleHandler				   EmailHandler					 FileHandler				|
+		  writeMessage(String msg)		 writeMessage(String msg)      writeMessage(String msg)	|
+																								|
+			   |_____________________________|_____________________________|____________________|																			|
+
+- Logger: abstract class Hanlder, cho phép thực hiện 1 chain logger dựa vào giá trị LogLevel ứng với từng
+Handler. Nếu mức độ lỗi (severity) lớn hơn hoặc bằng với LogLevel mà nó có thể handle thì sẽ thực hiện
+writeMessage(), đồng thời gọi Handler kế tiếp nếu có.
+- ConsoleLogger, FileLogger, EmailLogger: đây là các ConcreteHandler nó xác định LogLevel mà nó có thể xử
+lý và cài đặt phương thức writeMessage() cho riêng nó.
+- Client
+- LogLevel: một enum dùng để xác định mức độ ghi log
+- AppLogger: lớp tiện ích, tạo chuỗi Handler để xử lý log.
+
+Ứng dụng phê duyệt nghỉ phép
+Xin <=3 ngày thì Supervisor approve, <=5 ngày thì DeliveryManager approve, >5 ngày thì Director.
+
+											Approver
+											  Approver nextApprover                      ___________
+   Client   ________request_____________	  Approver setNext(Approver nextApprover)				|
+											  void approveLeave(LeaveRequest request)				|
+											  abstract boolean canApprove(int noDay)				|
+											  abstract void doApproving(LeaveRequest request)		|
+											       |											successor
+				_________________extends___________|____________extends____							|
+			   |                             |                             |						|
+		Supervisor				      DeliveryManager				   Director						|
+		  canApprove(int noDay)         canApprove(int noDay)     		 canApprove(int noDay)		|
+		  doApproving(LeaveRequest		doApproving(LeaveRequest		 doApproving(LeaveRequest	|
+		  request)						request)						 request)					|	
+																									|
+			   |_____________________________|_____________________________|________________________|		
+
+
+5. Ưu nhược điểm
+- Giảm kết nối (loose coupling): thay vì 1 object có khả năng xử lý request chứa tham chiếu đến tất cả
+các object khác, nó chỉ cần 1 tham chiếu đến object tiếp theo. tránh sự kiên kết trực tiếp giữa object
+gửi yêu cầu và object nhận yêu cầu
+- Tăng tính linh hoạt: đảm bảo nguyên lý open/close
+- Phân chia trách nhiệm đổi dây chuyển trong thời gian chạy
+- Ko đảm bảo có object xử lý yêu cầu
+
+Nhược điểm:
+
+
+
+6. Sử dụng khi nào?
+- Có nhiều hơn 1 object có khả năng xử lý 1 yêu cầu trong khi object cụ thể nào xử lý yêu cầu đó lại phụ
+thuộc vào ngữ cảnh sử dụng.
+- Muốn gửi yêu cầu đến 1 trong số vài đối tượng nhưng ko xác định được object cụ thể nào sẽ xử lý.
+- Khi cần phải thực thi các trình xử lý theo 1 thứ tự nhất định
+- Khi 1 tập hợp các object xử lý có thể thay đổi động: tập hợp các object có khả năng xử lý yêu cầu có thể
+thêm or bớt hay thay đổi thứ tự sau này.

@@ -1,0 +1,84 @@
+Mediator
+
+1. Định nghĩa
+
+Mediator có nghĩa là người trung gian. Pattern này nói rằng “Định nghĩa một đối tượng gói gọn cách một
+tập hợp các đối tượng tương tác. Mediator thúc đẩy sự khớp nối lỏng lẻo (loose coupling) bằng cách ngăn
+không cho các đối tượng đề cập đến nhau một cách rõ ràng và nó cho phép bạn thay đổi sự tương tác của
+chúng một cách độc lập”.
+
+Mediator Patern (mô hình trung gian) được sử dụng để giảm sự phức tạp trong “giao tiếp” giữa các lớp và 
+các đối tượng. Mô hình này cung cấp một lớp trung gian có nhiệm vụ xử lý thông tin liên lạc giữa các tầng
+lớp, hỗ trợ bảo trì mã code dễ dàng bằng cách khớp nối lỏng lẻo. Khớp nối lỏng lẻo ở đây được hiểu là các
+đối tượng tương đồng không “giao tiếp” trực tiếp với nhau mà giao tiếp thông qua người trung gian, và nó 
+cho phép thay thay đổi cách tương tác giữa chúng một cách độc lập.
+
+2. Thành phần
+
+	Mediator           -------------mediator--------------	Colleague
+	
+		|														|
+	implements									----implements-------implements---
+		|										|								  |	
+	ConcreteMediator  --communicate-->	ConcreteColleague1				ConcreteColleague2
+	   	|																		  |
+	   	\----------------------------communicate----------------------------------/
+	   	
+	   								  										 
+Các thành phần
+- Colleague : là một abstract class, giữ tham chiếu đến Mediator object.
+- ConcreteColleague : cài đặt các phương thức của Colleague. Giao tiếp thông qua Mediator khi cần giao tiếp
+với Colleague khác.
+- Mediator : là một interface, định nghĩa các phương thức để giao tiếp với các Colleague object.
+- ConcreteMediator : cài đặt các phương thức của Mediator, biết và quản lý các Colleague object. 
+
+                             	
+3. Cách thực hiện và Ví dụ
+
+Ví dụ hệ thống chat
+Trong một ứng dụng chat, một user sẽ có thể send và recieve message. Khi một user muốn send message đến group
+thì user đó phải tìm xem tất cả những người đang online hoặc trong trạng thái có thể message để send. Nếu bình
+thường user gửi tin phải tự làm hết mọi thứ, phải tự kiểm tra từng member và thực hiện việc gửi tin nhắn. Khi 
+sử dụng Mediator: user không cần tự kiểm tra, không quan tâm ai có thể nhận message, user chỉ việc gửi thông 
+tin đến Mediator của group. Mediator sẽ tự điều phối message này đến người nhận.
+
+
+	ChatMediator           				-------------mediator----------		User
+	  abstract void sendMessage												  ChatMediator mediator
+	     (String msg, User user)											  String name
+	  abstract void addUser(User user)										  abstract void send(String msg)
+	  	|																	  abstract void receive(String msg)
+		|																				|
+	implements																		implements
+		|																		  		|	
+	ChatMediatorImpl   					----communicate--------------->		UserImpl
+	  void abstract void sendMessage										  void send(String msg)
+			(String msg, User user)											  void receive(String msg)			
+	  void addUser(User user)								
+
+
+Ví dụ đèn giao thông
+
+
+5. Ưu nhược điểm
+- Đảm bảo nguyên tắc SRP: tách phần giao tiếp giữa các thành phần ra 1 nơi khác
+- Đảm bảo nguyên tắc open/close
+- Giảm khớp nối giữa các component
+- Tái sử dụng component dễ dàng hơn
+- Đơn giản hóa cách giao tiếp giữa các object
+
+Nhược điểm:
+
+
+
+6. Sử dụng khi nào?
+- Khi tập các object giao tiếp theo những cách thức được xác định rõ ràng nhưng phức tạp.
+- Khi cần tái sử dụng đc 1 object nhưng rất khó khăn vì nó tham chiếu và giao tiếp với nhiều object khác
+- Điều chỉnh hành vi giữa các lớp 1 cách dễ dàng, ko cần chỉnh sửa ở nhiều lớp.
+
+7. So sánh
+
+
+
+
+

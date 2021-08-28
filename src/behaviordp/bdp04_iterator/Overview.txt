@@ -1,0 +1,75 @@
+Iterior
+
+1. Định nghĩa
+
+Provide a way to access the elements of an aggregate object sequentially without exposing its
+underlying representation.
+
+Cung cấp 1 cách thức truy cập tuần tự các phần tử của 1 object tổng hợp mà ko cần tạo dựng riêng các
+phương pháp truy cập cho đối tượng tổng hợp này. Iterior được thiết kế cho phép xử lý nhiều loại tập
+hợp khác nhau bằng cách truy cập những phần tử của tập hợp với cùng một phương pháp cùng một cách thức
+định sẵn mà ko cần phải hiểu rõ về những chi tiết bên trong của những tập hợp này.
+
+2. Thành phần
+
+	Aggregate             <------------		Client		------------->		Iterator
+	  createIterator()														  first()
+	  																		  next()
+	  		|																  currentItem()
+	  		|																  isDone()
+	   implements																|
+	   		|																implements
+	   		|																	|
+	   		|																	|
+	ConcreteAggregate	--------------------------------------------->		ConcreteIterator
+	  createIterator()														  first()
+	        |																  next()
+	return new ConcreteIterator(this)										  currentItem()
+																			  isDone()   		
+	   								  										 
+Các thành phần
+- Aggregate: 1 interface định nghĩa các phương thức để tạo Iterator object
+- ConcreteAggregate: cài đặt các phương thức của Aggregate, nó cài đặt interface tạo Iterator để trả về
+1 thể hiện của ConcreteIterator thích hợp.
+- Iterator: interface or abstract class, định nghĩa các phương thức để truy cập và duyệt qua các phần tử
+- ConcreteIterator: cài đặt phương thức của Iterator, giữ index khi duyệt qua các phần tử.
+- Client
+                             	
+3. Cách thực hiện và Ví dụ
+
+Ví dụ duyệt menu
+
+		-----------------------------		Client		------------->		ItemIterator<T>
+	   |																	  boolean hasNext()
+	   |																      T next()
+	   |																			|
+	   |																		implements
+	   |																			|
+	   |																			|
+	Menu				                 ---------------------------->		MenuItemIterator<Item>
+	  addItem(Item item)													  boolean hasNext()
+	  ItemIterator<Item> iterator()
+	        |																  T next()
+	return new MenuItemIterator()										  
+																			
+
+
+5. Ưu nhược điểm
+- Đảm bảo nguyên tắc SRP( trách nhiệm đơn lẻ): tách phần cài đặt các method của tập hơn và phần duyệt
+qua các phân tử theo từng class riêng lẻ.
+- Đảm bảo nguyên tắc Open/Close: chúng ta có thể implement các loại collection mới và iterator mới, sau
+đó chuyển chúng vào code hiện có mà ko vi phạm nguyên tắc gì
+- Chúng ta có thể truy cập song song trên cùng 1 tập hợp vì mỗi đối tượng iterator có chứa trạng thái
+riêng của nó
+
+Nhược điểm:
+- Kém hiệu quả hơn so với việc duyệt qua tập hợp 1 cách trực tiếp
+- Có thể ko cần thiết nếu ứng dụng chỉ hoạt động với các tập hợp đơn giản
+
+
+6. Sử dụng khi nào?
+Cần truy cập nội dung của đối tượng trong tập hợp mà không cần biết nội dung cài đặt bên trong nó.
+Hỗ trợ truy xuất nhiều loại tập hợp khác nhau.
+Cung cấp một interface duy nhất để duyệt qua các phần tử của một tập hợp.
+
+

@@ -1,0 +1,114 @@
+Command
+
+1. Định nghĩa
+
+Encapsulate a request as an object, thereby letting you parameterize clients with different requests,
+queue or log requests, and support undoable operations.
+
+Command cho phép chuyển yêu cầu thành đối tượng độc lập, có thể đc sử dụng để tham số hóa các object
+với các yêu cầu khác nhau như log, queue (undo/redo), transaction. Command cho phép tất cả những
+request gửi đến object được lưu trữ trong chính object đo dưới dạng một command - giống như 1 class
+trung gian được tạo ra để lưu trữ các câu lệnh và trạng thái của object tại 1 thời điểm nào đó.
+
+2. Thành phần
+
+	Client   ----- request ----->	Invoker		--------invoke----------	<<Interface>>
+																			Command
+	   |																	  execute()
+	   |																	  	  |
+	   |																	  implements
+	   |																	      |
+	   \-------uses ------------>	Receiver	--------receiver--------	ConcreteCommand
+	   								  action()								  Receiver receiver
+	   								  										  execute()
+	   								  										      |
+	   								  										 receiver.action()
+	   								  										 
+Các thành phần
+	- Command: là một interface hoặc abstract class, chứa một phương thức trừu tượng thực thi một 
+	hành động (operation). Request sẽ được đóng gói dưới dạng Command.
+	- ConcreteCommand: là các implementation của Command. Định nghĩa một sự gắn kết giữa một đối 
+	tượng Receiver và một hành động. Mỗi một ConcreteCommand sẽ phục vụ cho một case request riêng.
+	- Client: tiếp nhận request từ phía người dùng, đóng gói request thành ConcreteCommand thích hợp
+	và thiết lập receiver của nó.
+	- Invoker : tiếp nhận ConcreteCommand từ Client và gọi execute() của ConcreteCommand để thực thi
+	 request.
+	- Receiver : đây là thành phần thực sự xử lý business logic cho case request. Trong phương thức
+	execute() của ConcreteCommand chúng ta sẽ gọi method thích hợp trong Receiver.
+                             	
+3. Cách thực hiện và Ví dụ
+
+Ứng dụng ngân hàng
+Ngân hàng cung cấp ứng dụng cho khách hàng có thể mở or đóng tài khoản trực tuyến. Hệ thống này được
+thiết kế theo dạng module, mỗi module sẽ thực hiện một nhiệm vụ riêng của nó, chẳng hạn mở tk, đóng
+tk. Do hệ thống ko biết mỗi module sẽ làm gì nên khi có yêu cầu nó sẽ đóng gói yêu cầu này và gọi module
+xử lý.
+
+	Client   ----- request ----->	BankApp   	           ---invoke----	<<Interface>>
+									  Command openAccount					Command				____
+	   |							  Command closeAccount					  execute()				|
+	   |							  void clickOpenAccount()				  	  |					|
+	   |							  void clickCloseAccount()				  implements			|
+	   |																	      |					|
+	   \-------uses ------------>	Account  	      ------receiver----	OpenAccount				|
+	   								  void open()							  Account account		|
+	   								  void close()							  void execute()		|
+	   								  		|								      |					|
+	   								  		|								 account.open()			|
+											|														|
+											|												 implements
+											|_______________receiver____	CloseAccount			|
+																			  Account account	____|
+																			  void execute()		
+																			      |
+																			 account.close()
+
+- Account: là 1 request class
+- Command: một interface của Command, cung cấp phương thức execute()
+- OpenAccount, CloseAccount: các ConcreteCommand, cài đặt các method của Command, sẽ thực hiện các xử
+lý thực tế.
+- BankApp: 1 class hoạt động như Invoker, gọi execute() của ConcreteCommand để thực thi request.
+
+
+Ứng dụng quản lý văn bản
+Ứng dụng văn bản cần một chức năng để thêm hoặc lưu trữ những hành động undo hay redo.
+Lớp Document chỉ cung cấp phương thức ghi thêm 1 dòng văn bản mới hoặc xóa dòng văn bản đã ghi trước đó.
+CHúng ta sẽ xây dựng một interface Command để cung cấp hành động undo/redo. Để sử dụng Command chúng ta
+cần 1 DocumentInvoker, lớp này sử dụng tính năng của Stack để lưu lại lịch sử những lần thêm mới và xóa,
+tương ứng undo và redo command.
+
+	Client   ----- request ----->	DocumentInvoker           ---invoke----	<<Interface>>
+									  StackCommand undoCommand				Command				
+	   |							  StackCommand redoCommand				  void undo()				
+	   |							  Document document						  void redo()					
+	   |							  void undo()							  	  |	
+	   |							  void redo()							      |		
+	   |							  void write(String text)				 implements
+	   |							  void read()								  |
+	   |																		  |
+	   \-------uses ------------>	Document  	             ---receiver---	DocumentEditorCommand
+	   								  Stack<String> lines					  Document document				
+	   								  void write(String text)				  String text;
+	   								  void eraseLast()						  void undo()
+	   								  void readDocument()					  void redo()
+	   								  											  |
+	   								  									  document.write(text)
+					
+
+5. Ưu nhược điểm
+- Dễ dàng tạo thêm các Command mới trong hệ thống mà ko cần thay đổi trong các lớp hiện có. Đảm bảo
+nguyên lý open/close
+- Tách object gọi operation từ object thực sự thực hiện operation, giảm kết nối giữa Invoker và Receiver
+- Cho phép tham số hóa các yêu cầu khác nhau bằng 1 hành động để thực hiện
+- Cho phép lưu các yêu cầu trong hàng đợi
+- Đóng gói yêu cầu trong 1 object, dễ dàng chuyển dữ liệu dưới dạng object giữa các thành phần trong
+hệ thống 
+
+Nhược điểm:
+
+
+
+6. Sử dụng khi nào?
+- Khi cần tham số hóa các đối tượng theo một hành động thực hiện.
+- Khi cần tạo và thực thi các yêu cầu vào các thời điểm khác nhau.
+- Khi cần hỗ trợ tính năng undo, log , callback hoặc transaction.
